@@ -3,6 +3,8 @@
     windows_subsystem = "windows"
 )]
 
+use tauri::Manager;
+
 mod cmd;
 mod plugin;
 
@@ -10,9 +12,12 @@ fn main() {
     tauri::Builder::default()
         .plugin(plugin::log::init())
         .setup(|app| {
-            // 获取日志路径
-            let log_dir = app.path_resolver().log_dir().unwrap();
-            println!("{}", log_dir.as_path().display());
+            #[cfg(debug_assertions)]
+            {
+                let window = app.get_window("main").unwrap();
+                window.open_devtools();
+                window.close_devtools();
+            }
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![cmd::greet])
