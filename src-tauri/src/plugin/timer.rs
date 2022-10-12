@@ -32,7 +32,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
                 .spawn_async_routine(body)
                 .unwrap();
 
-            delay_timer.add_task(task).ok();
+            // delay_timer.add_task(task).ok();
             Ok(())
         })
         .build();
