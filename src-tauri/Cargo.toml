@@ -19,6 +19,9 @@ serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.1", features = ["api-all"] }
 log = "^0.4"
 log4rs = "^1.2.0"
+reqwest = {version = "0.11.12",feature = ["json"] }
+tokio = {version = "1.21.2",feature = ["full"] }
+delay_timer = "0.11.3"
 
 [features]
 # by default Tauri runs in production mode

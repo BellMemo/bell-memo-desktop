@@ -11,6 +11,7 @@ mod plugin;
 fn main() {
     tauri::Builder::default()
         .plugin(plugin::log::init())
+        .plugin(plugin::timer::init())
         .setup(|app| {
             #[cfg(debug_assertions)]
             {
