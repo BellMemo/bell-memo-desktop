@@ -4,12 +4,15 @@
 )]
 
 mod cmd;
+mod plugin;
 
 fn main() {
     tauri::Builder::default()
+        .plugin(plugin::log::init())
         .setup(|app| {
-            let desc = app.package_info().description;
-            println!("{}", desc);
+            // 获取日志路径
+            let log_dir = app.path_resolver().log_dir().unwrap();
+            println!("{}", log_dir.as_path().display());
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![cmd::greet])
