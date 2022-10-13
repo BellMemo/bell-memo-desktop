@@ -10,6 +10,7 @@ mod plugin;
 
 fn main() {
     tauri::Builder::default()
+        .plugin(plugin::config::init())
         .plugin(plugin::log::init())
         .plugin(plugin::timer::init())
         .setup(|app| {
