@@ -7,10 +7,7 @@ export const Header = () => {
   const [searchValue, setSearchValue] = useState("");
 
   const handleSearch = () => {
-    console.log(1234);
-    invoke("greet", {
-      name: "name",
-    });
+    invoke('get_greet');
   };
 
   return (
