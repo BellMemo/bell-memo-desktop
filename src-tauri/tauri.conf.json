@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "bell-memo-desktop",
+    "productName": "BellMemo",
     "version": "0.0.0"
   },
   "tauri": {
