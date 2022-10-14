@@ -1,5 +1,5 @@
-use std::fs;
 use serde::{Deserialize, Serialize};
+use std::fs;
 use tauri::{
     plugin::{Builder as PluginBuilder, TauriPlugin},
     Manager, Runtime,
@@ -47,14 +47,13 @@ pub fn read_config() -> Config {
     return result;
 }
 
-// @TODO: should impl log func provider to js invoke
 #[tauri::command]
-async fn do_something<R: Runtime>(
+fn get<R: Runtime>(
     _app: tauri::AppHandle<R>,
     _window: tauri::Window<R>,
-) -> Result<(), String> {
-    println!("command called");
-    Ok(())
+) -> Result<Config, String> {
+    let config = read_config();
+    Ok(config)
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
@@ -67,6 +66,6 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             app.manage(config);
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![do_something])
+        .invoke_handler(tauri::generate_handler![get])
         .build();
 }

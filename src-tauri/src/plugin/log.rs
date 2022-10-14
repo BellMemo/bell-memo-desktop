@@ -8,13 +8,33 @@ use tauri::{
     Runtime,
 };
 
-// @TODO: should impl log func provider to js invoke
 #[tauri::command]
-async fn do_something<R: Runtime>(
+async fn info<R: Runtime>(
     _app: tauri::AppHandle<R>,
     _window: tauri::Window<R>,
+    message: String,
 ) -> Result<(), String> {
-    println!("command called");
+    log::info!("{}", message);
+    Ok(())
+}
+
+#[tauri::command]
+async fn warn<R: Runtime>(
+    _app: tauri::AppHandle<R>,
+    _window: tauri::Window<R>,
+    message: String,
+) -> Result<(), String> {
+    log::warn!("{}", message);
+    Ok(())
+}
+
+#[tauri::command]
+async fn error<R: Runtime>(
+    _app: tauri::AppHandle<R>,
+    _window: tauri::Window<R>,
+    message: String,
+) -> Result<(), String> {
+    log::error!("{}", message);
     Ok(())
 }
 
@@ -49,6 +69,6 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             log4rs::init_config(config).unwrap();
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![do_something])
+        .invoke_handler(tauri::generate_handler![info, warn, error])
         .build();
 }
