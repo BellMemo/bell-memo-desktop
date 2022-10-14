@@ -19,7 +19,7 @@ async fn do_something<R: Runtime>(
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
-    return PluginBuilder::new("window")
+    return PluginBuilder::new("log")
         .setup(|app| {
             let log_dir = app.path_resolver().log_dir().unwrap();
             let stdout = ConsoleAppender::builder().build();
@@ -34,7 +34,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
                 .build(
                     Root::builder()
                         .appender("log_file")
-                        .build(LevelFilter::Info),
+                        .build(LevelFilter::Error),
                 )
                 .unwrap();
 

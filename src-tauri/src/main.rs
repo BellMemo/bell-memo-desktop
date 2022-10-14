@@ -7,8 +7,11 @@ use tauri::Manager;
 
 mod cmd;
 mod plugin;
+mod util;
 
 fn main() {
+    let context = tauri::generate_context!();
+
     tauri::Builder::default()
         .plugin(plugin::config::init())
         .plugin(plugin::log::init())
@@ -23,6 +26,6 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![cmd::greet])
-        .run(tauri::generate_context!())
+        .run(context)
         .expect("error while running tauri application");
 }

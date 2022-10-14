@@ -1,8 +1,8 @@
 [package]
-name = "lingze-desktop"
+name = "bell-memo-desktop"
 version = "0.0.0"
 description = "A Tauri App"
-authors = ["lingze Project"]
+authors = ["BellMemo Project"]
 license = ""
 repository = ""
 edition = "2021"
@@ -16,7 +16,7 @@ tauri-build = { version = "1.1", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.1", features = ["api-all"] }
+tauri = { version = "1.1", features = ["fs-all"] }
 log = "^0.4"
 log4rs = "^1.2.0"
 reqwest = {version = "0.11.12",feature = ["json"] }

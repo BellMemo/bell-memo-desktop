@@ -14,9 +14,9 @@ async fn async_template() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
-    return PluginBuilder::new("window")
+    return PluginBuilder::new("timer")
         .setup(|_app| {
-            let delay_timer = DelayTimer::new();
+            let _delay_timer = DelayTimer::new();
             let mut task_builder = TaskBuilder::default();
 
             let body = move || async move {
@@ -25,7 +25,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
                 println!("create_async_fn_body:i'success");
             };
 
-            let task = task_builder
+            let _task = task_builder
                 .set_frequency_repeated_by_seconds(8)
                 .set_task_id(2)
                 .set_maximum_running_time(5)

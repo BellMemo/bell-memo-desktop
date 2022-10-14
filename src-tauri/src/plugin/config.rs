@@ -1,14 +1,15 @@
-use std::{fs, path::PathBuf};
-
+use std::fs;
 use serde::{Deserialize, Serialize};
 use tauri::{
     plugin::{Builder as PluginBuilder, TauriPlugin},
-    AppHandle, Runtime,
+    Manager, Runtime,
 };
+
+use crate::util;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Cron {
-    pub time: char,
+    pub time: String,
     pub is_open: bool,
 }
 
@@ -18,31 +19,31 @@ pub struct Config {
     pub cron: Cron,
 }
 
-fn resolve_config<R: Runtime>(app: &AppHandle<R>) {
-    let dir = app.path_resolver().log_dir().unwrap();
-    let config_dir = dir.as_path().join("app.config.json");
-    println!("{}",dir.as_path().display());
-    if !config_dir.is_file() {
-        let default_config = r#"
-        {
-            "cron": {
-                "time": "8",
-                "is_open": true
-            }
-        }
-        "#;
-        let default_value = serde_json::to_value(default_config).unwrap();
-        fs::write(
-            config_dir,
-            serde_json::to_string_pretty(&default_value).unwrap(),
-        )
-        .unwrap();
+fn resolve_config() {
+    let file_path = util::app_path::app_config_path()
+        .as_path()
+        .join("app.config.json");
+
+    log::info!("resolve config path: {}", file_path.as_path().display());
+    if !file_path.is_file() {
+        let default_config = Config {
+            cron: Cron {
+                time: String::from("8"),
+                is_open: true,
+            },
+        };
+        let default_value = serde_json::to_string(&default_config).unwrap();
+        fs::write(file_path, default_value).unwrap();
     }
 }
 
-pub fn read_config(config_path: PathBuf) -> Config {
-    let config = fs::read_to_string(config_path.as_path().join("app.config.json")).unwrap();
-    let result = serde_json::from_str::<Config>(&config).unwrap();
+pub fn read_config() -> Config {
+    let file_path = util::app_path::app_config_path()
+        .as_path()
+        .join("app.config.json");
+    let config = fs::read_to_string(file_path).unwrap();
+    log::info!("config string is: {}", config.as_str());
+    let result: Config = serde_json::from_str(&config).unwrap();
     return result;
 }
 
@@ -57,12 +58,13 @@ async fn do_something<R: Runtime>(
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
-    return PluginBuilder::new("window")
+    return PluginBuilder::new("config")
         .setup(|app| {
-            resolve_config(app);
-            let dir = app.path_resolver().log_dir().unwrap();
-            let config = read_config(dir);
-            println!("{}",config.cron.is_open);
+            resolve_config();
+            let config = read_config();
+            log::info!("{}", config.cron.is_open);
+            // 默认启动注入全局配置
+            app.manage(config);
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![do_something])

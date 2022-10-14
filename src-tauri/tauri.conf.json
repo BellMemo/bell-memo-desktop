@@ -6,12 +6,16 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "lingze-desktop",
+    "productName": "bell-memo-desktop",
     "version": "0.0.0"
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": false,
+      "fs": {
+        "all": true,
+        "scope": ["$CONFIG/com.bell.memo.desktop/**","$DATA/com.bell.memo.desktop/**","$LOG/com.bell.memo.desktop/**"]
+      }
     },
     "bundle": {
       "active": true,
@@ -28,8 +32,8 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
-      "longDescription": "",
+      "identifier": "com.bell.memo.desktop",
+      "longDescription": "bell memo application for desktop with tauri",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -57,7 +61,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "灵泽",
+        "title": "铃",
         "width": 800
       }
     ]
