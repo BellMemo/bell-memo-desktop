@@ -1,5 +1,5 @@
-### lingze-desktop
+### bell-memo-desktop
 
-#### 灵泽桌面应用
+#### 铃桌面应用
 
 基于Tauri构建
