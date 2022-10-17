@@ -6,9 +6,9 @@ use tauri::{
 };
 use tokio::time::sleep;
 
-async fn async_template() -> Result<(), Box<dyn std::error::Error>> {
+async fn async_template() -> Result<(), ()> {
     let client = reqwest::Client::new();
-    let res = client.get("http://httpbin.org/get").send().await?;
+    let res = client.get("http://httpbin.org/get").send().await.unwrap();
     println!("{:#?}", res);
     Ok(())
 }
@@ -32,7 +32,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
                 .spawn_async_routine(body)
                 .unwrap();
 
-            // delay_timer.add_task(task).ok();
+            // delay_timer.add_task(task).ok().unwrap();
             Ok(())
         })
         .build();

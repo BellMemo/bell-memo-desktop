@@ -8,6 +8,7 @@ use tauri::Manager;
 mod cmd;
 mod plugin;
 mod util;
+mod model;
 
 fn main() {
     let context = tauri::generate_context!();
@@ -17,6 +18,11 @@ fn main() {
         .plugin(plugin::log::init())
         .plugin(plugin::timer::init())
         .setup(|app| {
+            // 在log初始化之后 进行DB初始化 避免无法打印日志
+            let db = model::db::Database::new();
+            // test db init success
+            db.ping();
+
             #[cfg(debug_assertions)]
             {
                 let window = app.get_window("main").unwrap();
