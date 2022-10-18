@@ -1,13 +1,13 @@
 import { Autocomplete, TextField } from "@mui/material";
 import { useState } from "react";
 import styles from "./Header.module.less";
-import { Log } from "@src/util/log";
+import { invoke } from "@tauri-apps/api";
 
 export const Header = () => {
   const [searchValue, setSearchValue] = useState("");
 
   const handleSearch = () => {
-    Log.info('test');
+    invoke('greet')
   };
 
   return (

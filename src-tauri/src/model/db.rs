@@ -11,7 +11,6 @@ pub struct Database {
 impl Database {
     pub fn new() -> Self {
         let db_path = app_path::app_config_path().as_path().join("db.db");
-
         let path_str = db_path.as_path().to_str().unwrap();
 
         if !Path::new(path_str).exists() {
@@ -19,19 +18,13 @@ impl Database {
         }
 
         let conn: Connection = Connection::open(db_path).unwrap();
-        log::info!("db init success: {}", conn.is_autocommit());
         Database { conn: conn }
     }
 
-    pub fn ping(&self) {
-        let result = self.conn.path().unwrap();
-        match Some(result) {
-            Some(_) => {
-                log::info!("db init success")
-            }
-            None => {
-                log::error!("db init failed")
-            }
-        }
+    pub fn ping(&self) -> bool {
+        let result = self.conn.is_autocommit();
+        println!("println ping is success {}", result);
+        log::info!("log ping is success {}", result);
+        return result;
     }
 }

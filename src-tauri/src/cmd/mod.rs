@@ -1,10 +1,10 @@
 use tauri::State;
 
-use crate::plugin::config::Config;
+use crate::plugin::db::Db;
 
 #[tauri::command]
-pub fn greet(name: &str, state: State<Config>) -> String {
-    log::info!("{}", state.inner().cron.is_open);
-    log::info!("test info");
-    format!("Hello, {}! You've been greeted from Rust!", name)
+pub fn greet(state: State<Db>) {
+    let conn = state.connection.lock().unwrap();
+    let db = conn.get("db").unwrap();
+    println!("aaa {}", db.ping());
 }

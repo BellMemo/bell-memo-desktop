@@ -37,5 +37,5 @@ type CommanderReturnValue = {
   "plugin:log|warn": void;
   "plugin:log|error": void;
   "plugin:config|get": Config;
-  get_greet: void;
+  greet: void;
 };
