@@ -1,6 +1,6 @@
 use std::{fs::File, path::Path};
 
-use rusqlite::Connection;
+use rusqlite::{Connection, Error, Params, Row, Statement};
 
 use crate::util::app_path;
 
@@ -26,5 +26,35 @@ impl Database {
         println!("println ping is success {}", result);
         log::info!("log ping is success {}", result);
         return result;
+    }
+
+    /**
+     * alias connection.execute
+     */
+    #[warn(dead_code)]
+    pub fn exec<P: Params>(&self, sql: &str, params: P) -> Result<usize, Error> {
+        let result = self.conn.execute(sql, params);
+        return result;
+    }
+
+    /**
+     * alias connection.query_row
+     */
+    #[warn(dead_code)]
+    pub fn query<T, P, F>(&self, sql: &str, params: P, f: F) -> Result<T, Error>
+    where
+        P: Params,
+        F: FnOnce(&Row<'_>) -> Result<T, Error>,
+    {
+        let result = self.conn.query_row(sql, params, f);
+        return result;
+    }
+
+    /**
+     * alias prepare
+     */
+    #[warn(dead_code)]
+    pub fn prepare(&self,sql: &str) -> Result<Statement,Error> {
+        return self.conn.prepare(sql);
     }
 }

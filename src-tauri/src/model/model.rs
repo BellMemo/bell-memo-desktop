@@ -2,26 +2,26 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug,Serialize,Deserialize)]
 pub struct MemoData {
-    id: String,
-    title: String,
-    content: String,
-    created: u64,
-    updated: u64,
+    pub id: String,
+    pub title: String,
+    pub content: String,
+    pub created: u64,
+    pub updated: u64,
 }
 
 #[derive(Debug,Serialize,Deserialize)]
 pub struct MemoTag {
-    id: String,
-    name: String,
-    created: u64,
-    updated: u64,
+    pub id: String,
+    pub name: String,
+    pub created: u64,
+    pub updated: u64,
 }
 
 #[derive(Debug,Serialize,Deserialize)]
 pub struct MemoTagData {
-    id: String,
-    tag_id: String,
-    memo_id:String,
-    created: u64,
-    updated: u64,
+    pub id: String,
+    pub tag_id: String,
+    pub memo_id:String,
+    pub created: u64,
+    pub updated: u64,
 }

@@ -16,19 +16,21 @@ declare module "@tauri-apps/api" {
 }
 
 interface Cron {
-    time: string;
-    is_open: boolean;
+  time: string;
+  is_open: boolean;
 }
 // App配置信息
 interface Config {
-    cron: Cron;
+  cron: Cron;
 }
 
 //  定义项目所有可调用命令的入参
+//  入参结构以Object为标准，统一为 `{params: any}`
 type CommanderParams = {
   "plugin:log|info": { message: string };
   "plugin:log|warn": { message: string };
   "plugin:log|error": { message: string };
+  select_memo_data: { params: { content: string } };
 };
 
 //  定义项目所有可调用命令的出参
@@ -37,5 +39,5 @@ type CommanderReturnValue = {
   "plugin:log|warn": void;
   "plugin:log|error": void;
   "plugin:config|get": Config;
-  greet: void;
+  select_memo_data: void;
 };

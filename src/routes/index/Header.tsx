@@ -7,7 +7,11 @@ export const Header = () => {
   const [searchValue, setSearchValue] = useState("");
 
   const handleSearch = () => {
-    invoke('greet')
+    invoke('select_memo_data',{
+      params:{
+        content: '123'
+      }
+    })
   };
 
   return (
