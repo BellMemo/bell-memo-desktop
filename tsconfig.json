@@ -15,8 +15,10 @@
     "jsx": "react-jsx",
     "paths": {
       "@src/*": ["./src/*"]
-    }
+    },
+    "types": ["./src/types"]
   },
   "include": ["src/**/*"],
+  "exclude": ["src/types/*"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
