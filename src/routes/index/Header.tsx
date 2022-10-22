@@ -1,7 +1,8 @@
-import { Autocomplete, TextField } from "@mui/material";
+import { Autocomplete, Button, TextField } from "@mui/material";
 import { useState } from "react";
 import styles from "./Header.module.less";
 import { invoke } from "@tauri-apps/api";
+import { Action } from "./Action";
 
 export const Header = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -20,6 +21,7 @@ export const Header = () => {
       <Autocomplete
         freeSolo
         options={[]}
+        className={styles.search}
         renderInput={(params) => (
           <TextField
             id="outlined-basic"
@@ -34,6 +36,7 @@ export const Header = () => {
           />
         )}
       />
+      <Action />
     </div>
   );
 };
