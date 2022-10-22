@@ -17,7 +17,7 @@ pub fn select_memo_data(state: State<Db>, params: SearchValue) -> Vec<MemoData> 
     let db = conn.get("db").unwrap();
 
     let mut stmt = db
-        .prepare("select * from memo_data where content=?;")
+        .prepare("select * from memo_data where content=?")
         .unwrap();
 
     let result = stmt

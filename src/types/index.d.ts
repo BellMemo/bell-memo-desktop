@@ -6,8 +6,8 @@ type CommonParams = CommanderParams & PluginCommanderParams;
 
 type InvokeType<T extends keyof CommonReturnValue> =
   T extends keyof CommonParams
-    ? (cmd: T, args: CommonParams[T]) => CommonReturnValue[T]
-    : (cmd: T) => CommonReturnValue[T];
+    ? (cmd: T, args: CommonParams[T]) => Promise<CommonReturnValue[T]>
+    : (cmd: T) => Promise<CommonReturnValue[T]>;
 
 type UnionToIntersection<U> = (
   U extends U ? (x: U) => unknown : never
@@ -20,3 +20,6 @@ declare module "@tauri-apps/api" {
     InvokeType<keyof CommonReturnValue>
   >;
 }
+
+export * from "./model";
+

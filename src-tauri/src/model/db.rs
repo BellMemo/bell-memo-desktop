@@ -1,8 +1,8 @@
 use std::{fs::File, path::Path};
-
 use rusqlite::{Connection, Error, Params, Row, Statement};
 
 use crate::util::app_path;
+use super::sql;
 
 pub struct Database {
     conn: Connection,
@@ -18,6 +18,12 @@ impl Database {
         }
 
         let conn: Connection = Connection::open(db_path).unwrap();
+
+        // 初始化表结构
+        conn.execute(sql::CREATE_MEMO_DATA, []).unwrap();
+        conn.execute(sql::CREATE_MEMO_TAG, []).unwrap();
+        conn.execute(sql::CREATE_MEMO_TAG_DATA, []).unwrap();
+
         Database { conn: conn }
     }
 
@@ -54,7 +60,7 @@ impl Database {
      * alias prepare
      */
     #[warn(dead_code)]
-    pub fn prepare(&self,sql: &str) -> Result<Statement,Error> {
+    pub fn prepare(&self, sql: &str) -> Result<Statement, Error> {
         return self.conn.prepare(sql);
     }
 }

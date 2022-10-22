@@ -6,12 +6,13 @@ import { invoke } from "@tauri-apps/api";
 export const Header = () => {
   const [searchValue, setSearchValue] = useState("");
 
-  const handleSearch = () => {
-    invoke('select_memo_data',{
-      params:{
-        content: '123'
-      }
-    })
+  const handleSearch = async () => {
+    const result = await invoke("select_memo_data", {
+      params: {
+        content: "123",
+      },
+    });
+    console.log(result);
   };
 
   return (
