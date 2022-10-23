@@ -9,9 +9,14 @@ mod cmd;
 mod model;
 mod plugin;
 mod util;
+mod prepare;
 
 fn main() {
-    let context = tauri::generate_context!();
+    let mut context = tauri::generate_context!();
+
+    let config = context.config_mut();
+
+    prepare::prepare(config);
 
     tauri::Builder::default()
         .plugin(plugin::config::init())

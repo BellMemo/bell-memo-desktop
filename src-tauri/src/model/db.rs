@@ -29,7 +29,6 @@ impl Database {
 
     pub fn ping(&self) -> bool {
         let result = self.conn.is_autocommit();
-        println!("println ping is success {}", result);
         log::info!("log ping is success {}", result);
         return result;
     }
