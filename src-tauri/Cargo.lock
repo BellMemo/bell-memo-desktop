@@ -229,6 +229,7 @@ checksum = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
 name = "bell-memo-desktop"
 version = "0.0.0"
 dependencies = [
+ "chrono",
  "delay_timer",
  "log",
  "log4rs",
@@ -239,6 +240,7 @@ dependencies = [
  "tauri",
  "tauri-build",
  "tokio",
+ "uuid 1.2.1",
 ]
 
 [[package]]

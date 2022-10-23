@@ -35,7 +35,9 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             cmd::memo_data::select_memo_data,
             cmd::memo_data::insert_memo_data,
-            cmd::memo_data::delete_memo_data
+            cmd::memo_data::delete_memo_data,
+            cmd::memo_tag::search_memo_tag,
+            cmd::memo_tag::insert_memo_tag
         ])
         .run(context)
         .expect("error while running tauri application");
