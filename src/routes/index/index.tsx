@@ -1,5 +1,5 @@
-import { Button } from "@mui/material";
 import { useState } from "react";
+import { EditRecord } from "../record/EditRecord";
 import { Header } from "./Header";
 
 export const Index = () => {
@@ -7,6 +7,7 @@ export const Index = () => {
   return (
     <div>
       <Header />
+      <EditRecord />
     </div>
   );
 };

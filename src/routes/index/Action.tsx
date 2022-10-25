@@ -10,7 +10,8 @@ import {
   MenuList,
 } from "@mui/material";
 import { ArrowDropDown } from "@mui/icons-material";
-import { invoke } from "@tauri-apps/api";
+import { useAppDispatch } from "@src/states";
+import { setVisible } from "@stores/recordSlice";
 
 const options = [
   { id: "sync", name: "同步数据" },
@@ -22,25 +23,10 @@ const options = [
 export function Action() {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
-
-  const fetchInfo = async () => {
-    const result = await invoke("search_memo_tag", {
-      params: {
-        content: "",
-        offset: 0,
-        limit: 10,
-      },
-    });
-    console.log(result);
-  };
+  const dispatch = useAppDispatch();
 
   const handleClick = async () => {
-    console.log(123);
-    await fetchInfo();
-    await invoke("insert_memo_tag", {
-      params: { content: "test tag" },
-    });
-    await fetchInfo();
+    dispatch(setVisible(true));
   };
 
   const handleMenuItemClick = (option: typeof options[number]) => {
