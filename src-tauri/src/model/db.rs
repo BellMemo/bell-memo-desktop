@@ -1,8 +1,8 @@
-use std::{fs::File, path::Path};
-use rusqlite::{Connection, Error, Params, Row, Statement, Transaction};
+use rusqlite::{Connection, Error, Params, Row, Statement, Transaction, TransactionBehavior};
+use std::{fs::File, path::Path, borrow::BorrowMut};
 
-use crate::util::app_path;
 use super::sql;
+use crate::util::app_path;
 
 pub struct Database {
     conn: Connection,
@@ -12,6 +12,8 @@ impl Database {
     pub fn new() -> Self {
         let db_path = app_path::app_config_path().as_path().join("db.db");
         let path_str = db_path.as_path().to_str().unwrap();
+
+        println!("{}",app_path::app_config_path().as_path().display());
 
         if !Path::new(path_str).exists() {
             File::create(path_str).unwrap();
@@ -67,6 +69,7 @@ impl Database {
      * alias transaction
      */
     pub fn transaction(&self) -> Transaction {
-        return self.conn.transaction()?;
+        let tx = Transaction::new_unchecked(&self.conn, TransactionBehavior::Deferred).unwrap();
+        return tx;
     }
 }

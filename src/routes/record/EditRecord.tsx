@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "@src/states";
 import { setVisible } from "@stores/recordSlice";
+import { invoke } from "@tauri-apps/api";
 import { useState } from "react";
 import { SelectTag } from "../tag/SelectTag";
 
@@ -25,6 +26,17 @@ export const EditRecord: React.FC = () => {
   const handleClose = () => {
     dispatch(setVisible(false));
   };
+
+  const handleSubmit = async () => {
+    console.log(value)
+    const result = await invoke('insert_memo_data',{
+      params: {
+        ...value,
+        tags: value.tags.map(i => i.id)
+      }
+    })
+    console.log(result);
+  }
 
   return (
     <Dialog fullWidth maxWidth="md" open={visible} onClose={handleClose}>
@@ -65,18 +77,18 @@ export const EditRecord: React.FC = () => {
             multiline
             fullWidth
             minRows={4}
-            value={value.title}
+            value={value.content}
             onChange={(e) => {
               setValue({
                 ...value,
-                title: e.target.value,
+                content: e.target.value,
               });
             }}
           />
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained">确定</Button>
+        <Button variant="contained" onClick={handleSubmit}>确定</Button>
         <Button variant="outlined" onClick={handleClose}>
           取消
         </Button>
