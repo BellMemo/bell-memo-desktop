@@ -20,3 +20,10 @@ export interface MemoTagData {
   created: number;
   updated: number;
 }
+
+export type Records = Omit<MemoData, "created" | "updated"> & {
+  tags: Array<{
+    id: string;
+    name: string;
+  }>;
+};

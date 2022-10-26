@@ -51,8 +51,8 @@ pub fn select_memo_data(state: State<Db>, params: SearchValue) -> Vec<SearchMemo
         .query_map(params![sql, sql, sql], |record| {
             Ok(MemoData {
                 id: record.get("id")?,
-                title: record.get("content")?,
-                content: record.get("title")?,
+                title: record.get("title")?,
+                content: record.get("content")?,
                 created: record.get("created")?,
                 updated: record.get("updated")?,
             })
