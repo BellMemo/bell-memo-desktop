@@ -1,5 +1,8 @@
+use chrono::Local;
+use rusqlite::params;
 use serde::{Deserialize, Serialize};
 use tauri::State;
+use uuid::Uuid;
 
 use crate::{model::model::MemoData, plugin::db::Db};
 
@@ -36,14 +39,38 @@ pub fn select_memo_data(state: State<Db>, params: SearchValue) -> Vec<MemoData> 
     return result.collect();
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct InsertMemoData {
+    pub title: String,
+    pub tags: Vec<String>,
+    pub content: String,
+}
+
 /**
  * 写入记录
  */
 #[tauri::command]
-pub fn insert_memo_data(state: State<Db>) {
+pub fn insert_memo_data(state: State<Db>, params: InsertMemoData) {
     let conn = state.connection.lock().unwrap();
     let db = conn.get("db").unwrap();
-    println!("aaa {}", db.ping());
+
+    let tx = db.transaction();
+    let memo_data_uuid = Uuid::new_v4().to_string();
+    let now = Local::now().timestamp_millis();
+
+    tx.execute(
+        "insert into memo_data(id,title,content,created,updated)",
+        params![memo_data_uuid, params.title, params.content, now, now],
+    )?;
+
+    for tag in params.tags {
+        let memo_tag_data_uuid = Uuid::new_v4().to_string();
+        tx.execute(
+            "insert into memo_tag_data(id,tag_id,memo_id,created,updated)",
+            params![memo_tag_data_uuid, tag, memo_data_uuid, now, now],
+        )?;
+    }
+    tx.commit();
 }
 
 /**

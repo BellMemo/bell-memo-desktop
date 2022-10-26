@@ -1,5 +1,5 @@
 use std::{fs::File, path::Path};
-use rusqlite::{Connection, Error, Params, Row, Statement};
+use rusqlite::{Connection, Error, Params, Row, Statement, Transaction};
 
 use crate::util::app_path;
 use super::sql;
@@ -61,5 +61,12 @@ impl Database {
     #[warn(dead_code)]
     pub fn prepare(&self, sql: &str) -> Result<Statement, Error> {
         return self.conn.prepare(sql);
+    }
+
+    /**
+     * alias transaction
+     */
+    pub fn transaction(&self) -> Transaction {
+        return self.conn.transaction()?;
     }
 }

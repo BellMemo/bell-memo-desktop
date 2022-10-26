@@ -16,5 +16,5 @@ export type CommanderParams = {
 export type CommanderReturnValue = {
   select_memo_data: Array<MemoData>;
   search_memo_tag: Array<MemoTag>;
-  insert_memo_tag: void;
+  insert_memo_tag: MemoTag;
 };

@@ -1,5 +1,5 @@
 use chrono::Local;
-use rusqlite::params;
+use rusqlite::{params, NO_PARAMS};
 use serde::{Deserialize, Serialize};
 use tauri::State;
 use uuid::Uuid;
@@ -21,21 +21,18 @@ pub fn search_memo_tag(state: State<Db>, params: SearchTagValue) -> Vec<MemoTag>
     let conn = state.connection.lock().unwrap();
     let db = conn.get("db").unwrap();
     let mut stmt = db
-        .prepare("select * from memo_tag where name like '%?1%' limit ?2 offset ?3")
+        .prepare("select * from memo_tag where name like ?1")
         .unwrap();
 
     let result = stmt
-        .query_map(
-            params![params.content, params.limit, params.offset,],
-            |record| {
-                Ok(MemoTag {
-                    id: record.get("id")?,
-                    name: record.get("name")?,
-                    created: record.get("created")?,
-                    updated: record.get("updated")?,
-                })
-            },
-        )
+        .query_map(params![format!("%{}%", params.content)], |record| {
+            Ok(MemoTag {
+                id: record.get("id")?,
+                name: record.get("name")?,
+                created: record.get("created")?,
+                updated: record.get("updated")?,
+            })
+        })
         .unwrap()
         .filter_map(|record| record.ok());
 
@@ -50,7 +47,7 @@ pub struct InsertMemoTag {
  * 写标签
  */
 #[tauri::command]
-pub fn insert_memo_tag(state: State<Db>, params: InsertMemoTag) {
+pub fn insert_memo_tag(state: State<Db>, params: InsertMemoTag) -> MemoTag {
     let conn = state.connection.lock().unwrap();
     let db = conn.get("db").unwrap();
 
@@ -62,16 +59,20 @@ pub fn insert_memo_tag(state: State<Db>, params: InsertMemoTag) {
         )
         .unwrap_or_default();
 
-    log::info!("tag value is: {:#?}", is_tag_exist);
-
     let uuid = Uuid::new_v4().to_string();
     let now = Local::now().timestamp_millis();
 
     let result = db
         .exec(
-            "insert into memo_tag values(?1,?2,?3,?4)",
+            "insert into memo_tag(id,name,created,updated) values(?1,?2,?3,?4)",
             params![uuid, params.content, now, now],
         )
         .unwrap();
-    log::info!("add tag is {}", result)
+
+    return MemoTag {
+        id: uuid,
+        name: params.content,
+        created: now as u64,
+        updated: now as u64,
+    };
 }
