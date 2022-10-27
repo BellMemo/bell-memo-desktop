@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use tauri::Manager;
+use tauri::{Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
 
 mod cmd;
 mod constants;
@@ -14,12 +14,22 @@ mod util;
 
 fn main() {
     let mut context = tauri::generate_context!();
+    let tray_menu = SystemTrayMenu::new();
 
     let config = context.config_mut();
 
     prepare::prepare(config);
 
     tauri::Builder::default()
+        .system_tray(SystemTray::new().with_menu(tray_menu))
+        .on_system_tray_event(|app, event| match event {
+            SystemTrayEvent::LeftClick { .. } => {
+                let window = app.get_window("main").unwrap();
+                window.show().unwrap();
+                window.set_focus().unwrap();
+            }
+            _ => {}
+        })
         .plugin(plugin::config::init())
         .plugin(plugin::log::init())
         .plugin(plugin::timer::init())
@@ -40,6 +50,12 @@ fn main() {
             cmd::memo_tag::search_memo_tag,
             cmd::memo_tag::insert_memo_tag
         ])
-        .run(context)
-        .expect("error while running tauri application");
+        .build(context)
+        .expect("error while running tauri application")
+        .run(|_app_handle, event| match event {
+            tauri::RunEvent::ExitRequested { api, .. } => {
+                api.prevent_exit();
+            }
+            _ => {}
+        });
 }

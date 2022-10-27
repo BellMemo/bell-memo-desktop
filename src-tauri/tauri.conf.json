@@ -58,12 +58,16 @@
     },
     "windows": [
       {
-        "fullscreen": false,
-        "height": 600,
+        "fullscreen": true,
+        "minHeight": 600,
         "resizable": true,
-        "title": "铃",
-        "width": 800
+        "title": "BellMemo",
+        "minWidth": 800
       }
-    ]
+    ],
+    "systemTray": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true
+    }
   }
 }
