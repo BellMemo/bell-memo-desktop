@@ -5,7 +5,7 @@ use tauri::{
     Manager, Runtime,
 };
 
-use crate::util;
+use crate::{constants::APP_NAME, util};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Cron {
@@ -21,7 +21,7 @@ pub struct Config {
 
 fn resolve_config() {
     let file_path = util::app_path::app_config_path()
-        .as_path()
+        .join(APP_NAME)
         .join("app.config.json");
 
     log::info!("resolve config path: {}", file_path.as_path().display());
@@ -48,10 +48,7 @@ pub fn read_config() -> Config {
 }
 
 #[tauri::command]
-fn get<R: Runtime>(
-    _app: tauri::AppHandle<R>,
-    _window: tauri::Window<R>,
-) -> Result<Config, String> {
+fn get<R: Runtime>(_app: tauri::AppHandle<R>, _window: tauri::Window<R>) -> Result<Config, String> {
     let config = read_config();
     Ok(config)
 }

@@ -6,10 +6,11 @@
 use tauri::Manager;
 
 mod cmd;
+mod constants;
 mod model;
 mod plugin;
-mod util;
 mod prepare;
+mod util;
 
 fn main() {
     let mut context = tauri::generate_context!();

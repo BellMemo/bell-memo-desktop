@@ -1,7 +1,8 @@
 use rusqlite::{Connection, Error, Params, Row, Statement, Transaction, TransactionBehavior};
-use std::{fs::File, path::Path, borrow::BorrowMut};
+use std::{borrow::BorrowMut, fs::File, path::Path};
 
 use super::sql;
+use crate::constants::APP_NAME;
 use crate::util::app_path;
 
 pub struct Database {
@@ -10,10 +11,10 @@ pub struct Database {
 
 impl Database {
     pub fn new() -> Self {
-        let db_path = app_path::app_config_path().as_path().join("db.db");
+        let db_path = app_path::app_config_path().join(APP_NAME).join("db.db");
         let path_str = db_path.as_path().to_str().unwrap();
 
-        println!("{}",app_path::app_config_path().as_path().display());
+        println!("{}", app_path::app_config_path().as_path().display());
 
         if !Path::new(path_str).exists() {
             File::create(path_str).unwrap();

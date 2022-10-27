@@ -10,6 +10,8 @@ use tauri::{
     Runtime,
 };
 
+use crate::constants::APP_NAME;
+
 #[tauri::command]
 async fn info<R: Runtime>(
     _app: tauri::AppHandle<R>,
@@ -46,13 +48,12 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         .build();
 }
 
-
 pub fn log_init(log_dir: PathBuf) {
     let stdout = ConsoleAppender::builder().build();
 
     let log_file = FileAppender::builder()
         .encoder(Box::new(PatternEncoder::new("{d} {l} {t} - {m}{n}\n")))
-        .build(log_dir.as_path().join("app.log"))
+        .build(log_dir.join(APP_NAME).join("app.log"))
         .unwrap();
 
     let mut config = Config::builder()
