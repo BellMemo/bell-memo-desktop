@@ -37,7 +37,6 @@ export const SelectTag: React.FC<SelectTagProps> = (props) => {
           limit: 1000,
         },
       });
-      console.log(resp);
       setTagOptions(resp);
     } catch (error) {
       console.log(error);
@@ -93,11 +92,10 @@ export const SelectTag: React.FC<SelectTagProps> = (props) => {
       inputValue={inputValue}
       onInputChange={(_e, v) => setInputValue(v)}
       onKeyDown={async ({ code }) => {
-        
         if (code === "Enter") {
-          const isExist = tagOptions.find(i => i.name === inputValue);
-          if(isExist){
-            setValue([isExist,...value]);
+          const isExist = tagOptions.find((i) => i.name === inputValue);
+          if (isExist) {
+            setValue([isExist, ...value]);
             return;
           }
           // 不存在的标签新增

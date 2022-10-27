@@ -8,7 +8,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "@src/states";
-import { setVisible } from "@stores/recordSlice";
+import { setVisible, reload } from "@stores/recordSlice";
 import { invoke } from "@tauri-apps/api";
 import { useState } from "react";
 import { SelectTag } from "../tag/SelectTag";
@@ -24,19 +24,26 @@ export const EditRecord: React.FC = () => {
   });
 
   const handleClose = () => {
+    setValue({
+      title: "",
+      tags: [],
+      content: "",
+    });
     dispatch(setVisible(false));
   };
 
   const handleSubmit = async () => {
-    console.log(value)
-    const result = await invoke('insert_memo_data',{
+    const result = await invoke("insert_memo_data", {
       params: {
         ...value,
-        tags: value.tags.map(i => i.id)
-      }
-    })
-    console.log(result);
-  }
+        tags: value.tags.map((i) => i.id),
+      },
+    });
+    if (result) {
+      handleClose();
+      dispatch(reload());
+    }
+  };
 
   return (
     <Dialog fullWidth maxWidth="md" open={visible} onClose={handleClose}>
@@ -88,7 +95,9 @@ export const EditRecord: React.FC = () => {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" onClick={handleSubmit}>确定</Button>
+        <Button variant="contained" onClick={handleSubmit}>
+          确定
+        </Button>
         <Button variant="outlined" onClick={handleClose}>
           取消
         </Button>

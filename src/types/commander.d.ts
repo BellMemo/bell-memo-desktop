@@ -27,5 +27,5 @@ export type CommanderReturnValue = {
   >;
   search_memo_tag: Array<MemoTag>;
   insert_memo_tag: MemoTag;
-  insert_memo_data: void;
+  insert_memo_data: boolean;
 };
