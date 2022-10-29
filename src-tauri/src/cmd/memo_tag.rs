@@ -1,5 +1,5 @@
 use chrono::Local;
-use rusqlite::{params, NO_PARAMS};
+use rusqlite::{params};
 use serde::{Deserialize, Serialize};
 use tauri::State;
 use uuid::Uuid;
@@ -51,7 +51,7 @@ pub fn insert_memo_tag(state: State<Db>, params: InsertMemoTag) -> MemoTag {
     let conn = state.connection.lock().unwrap();
     let db = conn.get("db").unwrap();
 
-    let is_tag_exist: String = db
+    let _is_tag_exist: String = db
         .query(
             "select id from memo_tag where name=?",
             [params.content.clone()],
@@ -62,7 +62,7 @@ pub fn insert_memo_tag(state: State<Db>, params: InsertMemoTag) -> MemoTag {
     let uuid = Uuid::new_v4().to_string();
     let now = Local::now().timestamp_millis();
 
-    let result = db
+    let _result = db
         .exec(
             "insert into memo_tag(id,name,created,updated) values(?1,?2,?3,?4)",
             params![uuid, params.content, now, now],

@@ -1,7 +1,6 @@
 use chrono::Local;
 use rusqlite::params;
 use serde::{Deserialize, Serialize};
-use std::fmt::format;
 use tauri::State;
 use uuid::Uuid;
 

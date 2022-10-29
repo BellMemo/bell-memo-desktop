@@ -1,5 +1,5 @@
 use rusqlite::{Connection, Error, Params, Row, Statement, Transaction, TransactionBehavior};
-use std::{borrow::BorrowMut, fs::File, path::Path};
+use std::{fs::File, path::Path};
 
 use super::sql;
 use crate::constants::APP_NAME;
