@@ -1,12 +1,14 @@
 import { Autocomplete, TextField } from "@mui/material";
 import { useCallback, useState } from "react";
-import styles from "./Header.module.less";
 import { invoke } from "@tauri-apps/api";
 import { debounce } from "lodash-es";
 import { Action } from "./Action";
+import styles from "./Header.module.less";
+
 
 export const Header = () => {
   const [searchValue, setSearchValue] = useState("");
+  const [searchResult,setSearchResult] = useState([]);
 
   const handleSearch = async (v) => {
     const result = await invoke("select_memo_data", {
@@ -28,7 +30,7 @@ export const Header = () => {
     <div className={styles.header}>
       <Autocomplete
         freeSolo
-        options={[]}
+        options={searchResult}
         className={styles.search}
         renderInput={(params) => (
           <TextField

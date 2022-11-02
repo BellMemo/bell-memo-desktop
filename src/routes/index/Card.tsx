@@ -4,6 +4,8 @@ import { ContentCopy } from "@mui/icons-material";
 import { writeText } from "@tauri-apps/api/clipboard";
 import { Tooltip } from "@mui/material";
 import styles from "./Card.module.less";
+import { RecordDetail } from "../detail";
+import { useState } from "react";
 
 interface CardProps {
   record: Records;
@@ -11,6 +13,7 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = (props) => {
   const { record } = props;
+  const [detailVisible, setDetailVisible] = useState(false);
 
   const handleCopy = async (v) => {
     await writeText(v);
@@ -18,25 +21,35 @@ export const Card: React.FC<CardProps> = (props) => {
   };
 
   return (
-    <div className={styles.card}>
-      <div className={styles.title}>{record.title}</div>
-      <div className={styles.tags}>
-        {(record.tags || []).map((i) => {
-          return <Tag content={i.name} key={i.id} />;
-        })}
+    <>
+      <div className={styles.card} onClick={() => setDetailVisible(true)}>
+        <div className={styles.title}>{record.title}</div>
+        <div className={styles.tags}>
+          {(record.tags || []).map((i) => {
+            return <Tag content={i.name} key={i.id} />;
+          })}
+        </div>
+        <div className={styles.content}>
+          <Tooltip title={record.content}>
+            <div>{record.content}</div>
+          </Tooltip>
+          <Tooltip title="点击复制">
+            <ContentCopy
+              fontSize="small"
+              color="action"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCopy(record.content);
+              }}
+            />
+          </Tooltip>
+        </div>
       </div>
-      <div className={styles.content}>
-        <div>{record.content}</div>
-        <Tooltip title="点击复制">
-          <ContentCopy
-            fontSize="small"
-            color="action"
-            onClick={() => {
-              handleCopy(record.content);
-            }}
-          />
-        </Tooltip>
-      </div>
-    </div>
+      <RecordDetail
+        record={record}
+        visible={detailVisible}
+        onVisibleChange={setDetailVisible}
+      />
+    </>
   );
 };
