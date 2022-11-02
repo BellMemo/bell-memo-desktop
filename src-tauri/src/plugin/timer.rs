@@ -1,39 +1,45 @@
 use delay_timer::prelude::*;
-use std::time::Duration;
 use tauri::{
     plugin::{Builder as PluginBuilder, TauriPlugin},
-    Runtime,
+    Manager, Runtime, State,
 };
-use tokio::time::sleep;
 
-async fn async_template() -> Result<(), ()> {
-    let client = reqwest::Client::new();
-    let res = client.get("http://httpbin.org/get").send().await.unwrap();
-    println!("{:#?}", res);
-    Ok(())
+use crate::constants::TIMER_TASK_ID;
+
+pub struct CronJobBuilder(DelayTimer);
+
+#[tauri::command]
+fn set_task(state: State<CronJobBuilder>) {
+    let body = || async {
+        println!("create_async_fn_body!");
+
+        println!("create_async_fn_body:i'success");
+    };
+
+    let mut task_builder = TaskBuilder::default();
+
+    let task = task_builder
+        .set_task_id(TIMER_TASK_ID)
+        .set_frequency_repeated_by_cron_str("@secondly")
+        .set_maximum_parallel_runnable_num(2)
+        .spawn_async_routine(body)
+        .unwrap();
+
+    let _result = state.0.insert_task(task).unwrap();
+}
+
+#[tauri::command]
+fn stop_task(state: State<CronJobBuilder>) {
+    let _result = state.0.stop_delay_timer().unwrap();
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
     return PluginBuilder::new("timer")
-        .setup(|_app| {
-            let _delay_timer = DelayTimer::new();
-            let mut task_builder = TaskBuilder::default();
-
-            let body = move || async move {
-                async_template().await.expect("Request failed.");
-                sleep(Duration::from_secs(3)).await;
-                println!("create_async_fn_body:i'success");
-            };
-
-            let _task = task_builder
-                .set_frequency_repeated_by_seconds(8)
-                .set_task_id(2)
-                .set_maximum_running_time(5)
-                .spawn_async_routine(body)
-                .unwrap();
-
-            // delay_timer.add_task(task).ok().unwrap();
+        .setup(|app| {
+            let delay_builder = DelayTimerBuilder::default().build();
+            app.manage(CronJobBuilder(delay_builder));
             Ok(())
         })
+        .invoke_handler(tauri::generate_handler![set_task, stop_task])
         .build();
 }

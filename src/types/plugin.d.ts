@@ -1,6 +1,7 @@
 interface Cron {
   time: string;
   is_open: boolean;
+  immediately: boolean;
 }
 
 // App配置信息
@@ -19,4 +20,12 @@ export type PluginCommanderReturnValue = {
   "plugin:log|warn": void;
   "plugin:log|error": void;
   "plugin:config|get": Config;
+  /**
+   * 启动定时任务
+   */
+  "plugin:timer|set_task": void;
+  /**
+   * 关闭定时任务
+   */
+  "plugin:timer|stop_task": void;
 };

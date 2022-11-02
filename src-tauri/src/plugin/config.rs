@@ -9,8 +9,15 @@ use crate::{constants::APP_NAME, util};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Cron {
+    // 触发周期
+    #[serde(default)]
     pub time: String,
+    // 是否开启定时任务
+    #[serde(default)]
     pub is_open: bool,
+    // 是否在应用启动时触发
+    #[serde(default)]
+    pub immediately: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -24,12 +31,12 @@ fn resolve_config() {
         .join(APP_NAME)
         .join("app.config.json");
 
-    log::info!("resolve config path: {}", file_path.as_path().display());
     if !file_path.is_file() {
         let default_config = Config {
             cron: Cron {
                 time: String::from("8"),
                 is_open: true,
+                immediately: true,
             },
         };
         let default_value = serde_json::to_string(&default_config).unwrap();
@@ -42,7 +49,6 @@ pub fn read_config() -> Config {
         .as_path()
         .join("app.config.json");
     let config = fs::read_to_string(file_path).unwrap();
-    log::info!("config string is: {}", config.as_str());
     let result: Config = serde_json::from_str(&config).unwrap();
     return result;
 }
@@ -58,7 +64,6 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         .setup(|app| {
             resolve_config();
             let config = read_config();
-            log::info!("{}", config.cron.is_open);
             // 默认启动注入全局配置
             app.manage(config);
             Ok(())

@@ -2,7 +2,6 @@ use std::{
     collections::HashMap,
     sync::{Arc, Mutex},
 };
-
 use tauri::{
     plugin::{Builder as PluginBuilder, TauriPlugin},
     Manager, Runtime,
