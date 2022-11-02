@@ -15,6 +15,9 @@
       "fs": {
         "all": true,
         "scope": ["$CONFIG/com.bell.memo.desktop/**","$DATA/com.bell.memo.desktop/**","$LOG/com.bell.memo.desktop/**"]
+      },
+      "clipboard": {
+        "all": true
       }
     },
     "bundle": {
