@@ -1,5 +1,5 @@
 import { getRandom } from "@src/util/utils";
-import styles from "./Tag.module.less";
+import styles from "./index.module.less";
 
 interface TagProps {
   content: string;

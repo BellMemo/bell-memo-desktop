@@ -1,10 +1,9 @@
-import { Tag } from "@src/components/Tag";
+import { Tag, message } from "@src/components";
 import { Records } from "@src/types";
 import { ContentCopy } from "@mui/icons-material";
 import { writeText } from "@tauri-apps/api/clipboard";
-import styles from "./Card.module.less";
 import { Tooltip } from "@mui/material";
-import { message } from "@src/components";
+import styles from "./Card.module.less";
 
 interface CardProps {
   record: Records;
