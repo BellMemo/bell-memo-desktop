@@ -64,12 +64,14 @@ pub fn select_memo_data(state: State<Db>, params: SearchValue) -> Vec<SearchMemo
     let mut return_value: Vec<SearchMemoData> = Vec::new();
 
     for row in memo_list {
-        let mut search_tag_stmt = db.prepare(
-            "SELECT memo_tag_data.tag_id as id, memo_tag.name
+        let mut search_tag_stmt = db
+            .prepare(
+                "SELECT memo_tag_data.tag_id as id, memo_tag.name
         FROM memo_tag_data
             LEFT JOIN memo_tag ON memo_tag_data.tag_id = memo_tag.id
         WHERE memo_tag_data.memo_id = ?1",
-        ).unwrap();
+            )
+            .unwrap();
 
         let tags: Vec<SearchTagValue> = search_tag_stmt
             .query_map(params![row.id], |record| {
@@ -131,12 +133,67 @@ pub fn insert_memo_data(state: State<Db>, params: InsertMemoData) -> bool {
     return success;
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct DeleteMemoData {
+    pub id: String,
+}
+
 /**
  * 删除记录
  */
 #[tauri::command]
-pub fn delete_memo_data(state: State<Db>) {
+pub fn delete_memo_data(state: State<Db>, params: DeleteMemoData) -> bool {
     let conn = state.connection.lock().unwrap();
     let db = conn.get("db").unwrap();
-    println!("aaa {}", db.ping());
+
+    let tx = db.transaction();
+    tx.execute("delete from memo_data where id = ?1", params![params.id])
+        .unwrap();
+    tx.execute(
+        "delete from memo_tag_data where memo_id = ?1",
+        params![params.id],
+    )
+    .unwrap();
+
+    let success = tx.commit().is_ok();
+    return success;
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct EditMemoData {
+    pub id: String,
+    pub title: String,
+    pub tags: Vec<String>,
+    pub content: String,
+}
+
+#[tauri::command]
+pub fn edit_memo_data(state: State<Db>, params: EditMemoData) -> bool {
+    let conn = state.connection.lock().unwrap();
+    let db = conn.get("db").unwrap();
+
+    let tx = db.transaction();
+    let now = Local::now().timestamp_millis();
+
+    tx.execute(
+        "update memo_data set title = ?1, content= ?2, updated = ?3 where id = ?4",
+        params![params.title, params.content, now, params.id],
+    )
+    .unwrap();
+
+    for t in params.tags {
+        tx.execute(
+            "delete from memo_tag_data where memo_id = ?1",
+            params![params.id],
+        )
+        .unwrap();
+        let memo_tag_data_uuid = Uuid::new_v4().to_string();
+        tx.execute(
+            "insert into memo_tag_data(id,tag_id,memo_id,created,updated) values(?1,?2,?3,?4,?5)",
+            params![memo_tag_data_uuid, t, params.id, now, now],
+        )
+        .unwrap();
+    }
+    let success = tx.commit().is_ok();
+    return success;
 }
