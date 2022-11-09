@@ -36,4 +36,6 @@ export type CommanderReturnValue = {
   insert_memo_data: boolean;
   delete_memo_data: boolean;
   edit_memo_data: boolean;
+  save_data: void;
+  import_data: void;
 };

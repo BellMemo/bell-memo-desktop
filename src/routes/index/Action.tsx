@@ -12,6 +12,7 @@ import {
 import { ArrowDropDown } from "@mui/icons-material";
 import { useAppDispatch } from "@src/states";
 import { setVisible } from "@stores/recordSlice";
+import { invoke } from "@tauri-apps/api";
 
 const options = [
   { id: "sync", name: "同步数据" },
@@ -31,6 +32,20 @@ export function Action() {
 
   const handleMenuItemClick = (option: typeof options[number]) => {
     setOpen(false);
+    switch (option.id) {
+      case "sync":
+        handleSync();
+      case "import":
+        handleImport();
+    }
+  };
+
+  const handleSync = async () => {
+    await invoke("save_data");
+  };
+
+  const handleImport = async () => {
+    await invoke("import_data");
   };
 
   const handleToggle = () => {

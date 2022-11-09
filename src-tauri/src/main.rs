@@ -54,7 +54,9 @@ fn main() {
             cmd::memo_data::delete_memo_data,
             cmd::memo_data::edit_memo_data,
             cmd::memo_tag::search_memo_tag,
-            cmd::memo_tag::insert_memo_tag
+            cmd::memo_tag::insert_memo_tag,
+            cmd::sync::save_data,
+            cmd::sync::import_data,
         ])
         .build(context)
         .expect("error while running tauri application")
