@@ -13,6 +13,9 @@ export type CommanderParams = {
   insert_memo_data: {
     params: { title: string; tags: string[]; content: string };
   };
+  delete_memo_data: {
+    params: { id: string };
+  };
 };
 
 //  定义项目所有可调用命令的出参
@@ -28,4 +31,5 @@ export type CommanderReturnValue = {
   search_memo_tag: Array<MemoTag>;
   insert_memo_tag: MemoTag;
   insert_memo_data: boolean;
+  delete_memo_data: boolean;
 };
