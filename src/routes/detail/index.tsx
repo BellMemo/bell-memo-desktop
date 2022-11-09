@@ -11,11 +11,13 @@ import { message } from "@src/components";
 import { confirm } from "@src/components/Confirm";
 import { useMergedState } from "@src/hooks";
 import { useAppDispatch } from "@src/states";
-import { reload } from "@src/states/features/recordSlice";
+import { reload } from "@stores/recordSlice";
 import { Records } from "@src/types";
 import { noop } from "@src/util/noop";
 import { invoke } from "@tauri-apps/api";
+import { EditRecord } from "../record/EditRecord";
 import styles from "./index.module.less";
+import { useState } from "react";
 
 interface RecordDetailProps {
   record: Records;
@@ -30,11 +32,21 @@ export const RecordDetail: React.FC<RecordDetailProps> = (props) => {
     onChange: props?.onVisibleChange || noop,
   });
   const dispatch = useAppDispatch();
+  const [editVisible, setEditVisible] = useState(false);
+
+  const handleEdit = () => {
+    setEditVisible(true);
+  };
+
+  const handleClose = () => {
+    setVisible(false);
+    dispatch(reload());
+  }
 
   const handleDelete = async () => {
     const yes = await confirm.error({
       title: `是否确认删除${record.title}？`,
-      content: '删除后，相关记录将无法恢复，请谨慎考虑。点击确认即可删除。'
+      content: "删除后，相关记录将无法恢复，请谨慎考虑。点击确认即可删除。",
     });
     if (!yes) {
       return;
@@ -51,58 +63,66 @@ export const RecordDetail: React.FC<RecordDetailProps> = (props) => {
   };
 
   return (
-    <Dialog
-      open={visible}
-      onClose={() => setVisible(false)}
-      fullWidth
-      maxWidth="md"
-    >
-      <DialogTitle>记录详情</DialogTitle>
-      <DialogContent className={styles.detail}>
-        <div className={styles["detail-item"]}>
-          <Typography variant="button" display="block" gutterBottom>
-            标题
-          </Typography>
-          <DialogContentText className="content">
-            {record?.title || "-"}
-          </DialogContentText>
-        </div>
-        <div className={styles["detail-item"]}>
-          <Typography variant="button" display="block" gutterBottom>
-            标签
-          </Typography>
-          <DialogContentText className="content">
-            {record?.title || "-"}
-          </DialogContentText>
-        </div>
-        <div className={styles["detail-item"]}>
-          <Typography variant="button" display="block" gutterBottom>
-            内容
-          </Typography>
-          <DialogContentText className="content">
-            {record?.content || "-"}
-          </DialogContentText>
-        </div>
-      </DialogContent>
-      <DialogActions className={styles.footer}>
-        <div>
-          <Button color="error" variant="outlined" onClick={handleDelete}>
-            删除
-          </Button>
-          <Button color="primary" variant="outlined">
-            编辑
-          </Button>
-        </div>
-        <div>
-          <Button
-            color="info"
-            variant="contained"
-            onClick={() => setVisible(false)}
-          >
-            关闭
-          </Button>
-        </div>
-      </DialogActions>
-    </Dialog>
+    <>
+      <Dialog
+        open={visible}
+        onClose={() => setVisible(false)}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>记录详情</DialogTitle>
+        <DialogContent className={styles.detail}>
+          <div className={styles["detail-item"]}>
+            <Typography variant="button" display="block" gutterBottom>
+              标题
+            </Typography>
+            <DialogContentText className="content">
+              {record?.title || "-"}
+            </DialogContentText>
+          </div>
+          <div className={styles["detail-item"]}>
+            <Typography variant="button" display="block" gutterBottom>
+              标签
+            </Typography>
+            <DialogContentText className="content">
+              {record?.title || "-"}
+            </DialogContentText>
+          </div>
+          <div className={styles["detail-item"]}>
+            <Typography variant="button" display="block" gutterBottom>
+              内容
+            </Typography>
+            <DialogContentText className="content">
+              {record?.content || "-"}
+            </DialogContentText>
+          </div>
+        </DialogContent>
+        <DialogActions className={styles.footer}>
+          <div>
+            <Button color="error" variant="outlined" onClick={handleDelete}>
+              删除
+            </Button>
+            <Button color="primary" variant="outlined" onClick={handleEdit}>
+              编辑
+            </Button>
+          </div>
+          <div>
+            <Button
+              color="info"
+              variant="contained"
+              onClick={() => setVisible(false)}
+            >
+              关闭
+            </Button>
+          </div>
+        </DialogActions>
+      </Dialog>
+      <EditRecord
+        record={record}
+        visible={editVisible}
+        setVisible={setEditVisible}
+        onClose={handleClose}
+      />
+    </>
   );
 };

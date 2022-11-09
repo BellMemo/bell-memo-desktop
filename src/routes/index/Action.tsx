@@ -31,7 +31,6 @@ export function Action() {
 
   const handleMenuItemClick = (option: typeof options[number]) => {
     setOpen(false);
-    console.log(option);
   };
 
   const handleToggle = () => {

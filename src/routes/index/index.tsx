@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EditRecord } from "../record/EditRecord";
+import { AddRecord } from "../record/AddRecord";
 import { Content } from "./Content";
 import { Header } from "./Header";
 
@@ -9,7 +9,7 @@ export const Index = () => {
     <div>
       <Header />
       <Content />
-      <EditRecord />
+      <AddRecord />
     </div>
   );
 };

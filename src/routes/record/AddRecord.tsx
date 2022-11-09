@@ -7,26 +7,16 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "@src/states";
+import { setVisible, reload } from "@stores/recordSlice";
 import { invoke } from "@tauri-apps/api";
-import { useEffect, useState } from "react";
-import { MemoTag } from "@src/types";
-import { noop } from "@src/util/noop";
+import { useState } from "react";
 import { SelectTag } from "../tag/SelectTag";
 
-interface EditRecordProps {
-  record?: {
-    id: string;
-    title: string;
-    tags: Partial<MemoTag>[];
-    content: string;
-  };
-  visible?: boolean;
-  setVisible?: (v: boolean) => void;
-  onClose?: () => void;
-}
 
-export const EditRecord: React.FC<EditRecordProps> = (props) => {
-  const { record, visible, setVisible, onClose = noop } = props;
+export const AddRecord: React.FC = () => {
+  const { visible } = useAppSelector((store) => store.record);
+  const dispatch = useAppDispatch();
 
   const [value, setValue] = useState({
     title: "",
@@ -40,11 +30,11 @@ export const EditRecord: React.FC<EditRecordProps> = (props) => {
       tags: [],
       content: "",
     });
-    setVisible(false);
+    dispatch(setVisible(false));
   };
 
   const handleSubmit = async () => {
-    const result = await invoke("edit_memo_data", {
+    const result = await invoke("insert_memo_data", {
       params: {
         ...value,
         tags: value.tags.map((i) => i.id),
@@ -52,19 +42,13 @@ export const EditRecord: React.FC<EditRecordProps> = (props) => {
     });
     if (result) {
       handleClose();
-      onClose();
+      dispatch(reload());
     }
   };
 
-  useEffect(() => {
-    if (record && visible) {
-      setValue(record);
-    }
-  }, [record, visible]);
-
   return (
     <Dialog fullWidth maxWidth="md" open={visible} onClose={handleClose}>
-      <DialogTitle>编辑记录</DialogTitle>
+      <DialogTitle>新增记录</DialogTitle>
       <DialogContent>
         <Box
           component="form"
