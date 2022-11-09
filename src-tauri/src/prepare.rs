@@ -4,7 +4,7 @@ use tauri::{api::path, Config as TauriConfig};
 
 // check some folders already existed
 fn check_folder(config: &mut TauriConfig) {
-    let log_folder = path::log_dir(&config).unwrap().join(APP_NAME);
+    let log_folder = path::app_log_dir(&config).unwrap().join(APP_NAME);
 
     if !log_folder.is_dir() {
         let log_folder_path = log_folder.to_str().unwrap();
@@ -23,6 +23,6 @@ fn check_folder(config: &mut TauriConfig) {
 pub fn prepare(config: &mut TauriConfig) {
     check_folder(config);
 
-    let log_dir = path::log_dir(&config).unwrap();
+    let log_dir = path::app_log_dir(&config).unwrap();
     log_init(log_dir);
 }
