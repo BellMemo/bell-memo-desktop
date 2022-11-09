@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use chrono::Local;
 use rusqlite::params;
 use serde::{Deserialize, Serialize};
