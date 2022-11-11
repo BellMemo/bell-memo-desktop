@@ -35,15 +35,18 @@ export function Action() {
     switch (option.id) {
       case "sync":
         handleSync();
+        break;
       case "import":
         handleImport();
+        break;
       case 'export':
         handleExport();
+        break;
     }
   };
 
   const handleSync = async () => {
-    await invoke("save_data");
+    console.log(12)
   };
 
   const handleImport = async () => {

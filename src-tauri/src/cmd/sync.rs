@@ -106,13 +106,13 @@ pub fn save_data(app: AppHandle, state: State<Db>) {
     }
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn import_data() {
-    // @TODO sync dialog api crashed https://github.com/tauri-apps/tauri/issues/5607
+    // sync dialog api crashed https://github.com/tauri-apps/tauri/issues/5607
     let file_path_buf = dialog::blocking::FileDialogBuilder::new()
         .add_filter("JSON", &["json"])
         .pick_file()
-        .unwrap();
+        .unwrap_or_default();
     let file_path = file_path_buf.as_path().to_str().unwrap();
     println!("{}", file_path);
 }
