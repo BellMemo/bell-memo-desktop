@@ -28,7 +28,7 @@ pub fn save_data(app: AppHandle, state: State<Db>) {
     let data_path = data_path_pf.to_str().unwrap();
 
     // 文件存在先删除
-    if !Path::new(data_path).is_file() {
+    if Path::new(data_path).is_file() {
         fs::remove_file(data_path).unwrap();
     }
 

@@ -37,6 +37,8 @@ export function Action() {
         handleSync();
       case "import":
         handleImport();
+      case 'export':
+        handleExport();
     }
   };
 
@@ -47,6 +49,10 @@ export function Action() {
   const handleImport = async () => {
     await invoke("import_data");
   };
+
+  const handleExport = async () => {
+    await invoke('save_data')
+  }
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
