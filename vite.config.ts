@@ -7,7 +7,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@src": path.resolve(__dirname,'./src'),
-      "@stores": path.resolve(__dirname,'./src/states/features'),
     }
   },
   plugins: [react()],
