@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Menu, Popover, Transition } from "@headlessui/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import {
@@ -7,18 +7,30 @@ import {
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import Logo from "@src/style/images/logo.png";
+import classNames from "classnames";
+import { Drawer } from "@src/components/Drawer";
 
-const userNavigation = [
-  { name: "标签设置", href: "#" },
-  { name: "导出数据", href: "#" },
-  { name: "导入数据", href: "#" },
+const Navigation = [
+  { name: "标签设置", key: "tag-setting" },
+  { name: "导出数据", key: "export-data" },
+  { name: "导入数据", key: "import-data" },
 ];
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export const Header = () => {
+  const [visible, setVisible] = useState(false);
+
+  const handleTagSetting = () => {
+    setVisible(true);
+  };
+
+  const handleMenuClick = (e: (typeof Navigation)[number]) => {
+    switch (e.key) {
+      case "tag-setting":
+        handleTagSetting();
+        break;
+    }
+  };
+
   return (
     <>
       {/* When the mobile menu is open, add `overflow-hidden` to the `body` element to prevent double scrollbars */}
@@ -115,15 +127,15 @@ export const Header = () => {
                       leaveTo="transform opacity-0 scale-95"
                     >
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        {userNavigation.map((item) => (
+                        {Navigation.map((item) => (
                           <Menu.Item key={item.name}>
                             {({ active }) => (
                               <a
-                                href={item.href}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-sm text-gray-700"
                                 )}
+                                onClick={() => handleMenuClick(item)}
                               >
                                 {item.name}
                               </a>
@@ -140,10 +152,10 @@ export const Header = () => {
             <Popover.Panel as="nav" className="lg:hidden" aria-label="Global">
               <div className="border-t border-gray-200 pb-3 pt-4">
                 <div className="mx-auto mt-3 max-w-3xl space-y-1 px-2 sm:px-4">
-                  {userNavigation.map((item) => (
+                  {Navigation.map((item) => (
                     <a
                       key={item.name}
-                      href={item.href}
+                      onClick={() => handleMenuClick(item)}
                       className="block rounded-md px-3 py-2 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900"
                     >
                       {item.name}
@@ -155,6 +167,11 @@ export const Header = () => {
           </>
         )}
       </Popover>
+      <Drawer
+        title="标签管理"
+        visible={visible}
+        onClose={() => setVisible(false)}
+      />
     </>
   );
 };
