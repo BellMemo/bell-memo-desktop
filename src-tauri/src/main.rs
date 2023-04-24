@@ -3,14 +3,8 @@
     windows_subsystem = "windows"
 )]
 
+use bell_memo_desktop::{cmd, plugin, prepare};
 use tauri::{Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
-
-mod cmd;
-mod constants;
-mod model;
-mod plugin;
-mod prepare;
-mod util;
 
 fn main() {
     let mut context = tauri::generate_context!();
