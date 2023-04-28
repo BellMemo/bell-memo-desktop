@@ -1,5 +1,5 @@
 use crate::{constants::APP_NAME, plugin::log::log_init};
-use std::{fs};
+use std::fs;
 use tauri::{api::path, Config as TauriConfig};
 
 // check some folders already existed

@@ -1,7 +1,4 @@
-use std::{
-    collections::HashMap,
-    sync::{Arc, Mutex},
-};
+use std::sync::Mutex;
 use tauri::{
     plugin::{Builder as PluginBuilder, TauriPlugin},
     Manager, Runtime,
@@ -11,7 +8,7 @@ use crate::model::db::Database;
 
 #[derive(Default)]
 pub struct Db {
-    pub connection: Arc<Mutex<HashMap<String, Database>>>,
+    pub connection: Mutex<Database>,
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
@@ -26,11 +23,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
 
             let db_state = app.state::<Db>();
 
-            db_state
-                .connection
-                .lock()
-                .unwrap()
-                .insert(String::from("db"), db_instance);
+            *db_state.connection.lock().unwrap() = db_instance;
 
             Ok(())
         })

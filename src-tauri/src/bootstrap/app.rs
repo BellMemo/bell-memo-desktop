@@ -1,26 +1,19 @@
-use std::sync::{Arc, Mutex};
-use tauri::{utils::assets::EmbeddedAssets, Config, Context};
 use tauri::{Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
 
 use crate::{cmd, plugin};
 
-pub struct Application {
-    pub config: Arc<Mutex<Config>>,
-    pub ctx: Arc<Context<EmbeddedAssets>>,
-}
+use super::prepare;
+
+pub struct Application;
 
 impl Application {
-    pub fn new(&self) -> Self {
-        let context = tauri::generate_context!();
-        let config = context.config().to_owned();
-        Self {
-            config: Arc::new(Mutex::new(config)),
-            ctx: Arc::new(context),
-        }
-    }
-
-    pub fn run(&self) {
+    pub fn run() {
+        let mut ctx = tauri::generate_context!();
         let tray_menu = SystemTrayMenu::new();
+
+        let config = ctx.config_mut();
+
+        prepare::prepare(config);
 
         tauri::Builder::default()
             .system_tray(SystemTray::new().with_menu(tray_menu))
@@ -60,7 +53,7 @@ impl Application {
                 cmd::sync::save_data,
                 cmd::sync::import_data,
             ])
-            .build(tauri::generate_context!())
+            .build(ctx)
             .expect("error while running tauri application")
             .run(|app, event| match event {
                 tauri::RunEvent::WindowEvent {

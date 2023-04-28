@@ -32,8 +32,7 @@ pub fn save_data(app: AppHandle, state: State<Db>) {
         fs::remove_file(data_path).unwrap();
     }
 
-    let conn = state.connection.lock().unwrap();
-    let db = conn.get("db").unwrap();
+    let db = state.connection.lock().unwrap();
 
     let mut memo_data_stmt = db.prepare("select * from memo_data").unwrap();
     let memo_data = memo_data_stmt

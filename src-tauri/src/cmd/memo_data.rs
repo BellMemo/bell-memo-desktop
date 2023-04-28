@@ -30,8 +30,7 @@ pub struct SearchMemoData {
  */
 #[tauri::command]
 pub fn select_memo_data(state: State<Db>, params: SearchValue) -> Vec<SearchMemoData> {
-    let conn = state.connection.lock().unwrap();
-    let db = conn.get("db").unwrap();
+    let db = state.connection.lock().unwrap();
 
     let mut stmt = db
         .prepare(
@@ -108,8 +107,7 @@ pub struct InsertMemoData {
  */
 #[tauri::command]
 pub fn insert_memo_data(state: State<Db>, params: InsertMemoData) -> bool {
-    let conn = state.connection.lock().unwrap();
-    let db = conn.get("db").unwrap();
+    let db = state.connection.lock().unwrap();
 
     let tx = db.transaction();
     let memo_data_uuid = Uuid::new_v4().to_string();
@@ -143,8 +141,7 @@ pub struct DeleteMemoData {
  */
 #[tauri::command]
 pub fn delete_memo_data(state: State<Db>, params: DeleteMemoData) -> bool {
-    let conn = state.connection.lock().unwrap();
-    let db = conn.get("db").unwrap();
+    let db = state.connection.lock().unwrap();
 
     let tx = db.transaction();
     tx.execute("delete from memo_data where id = ?1", params![params.id])
@@ -169,8 +166,7 @@ pub struct EditMemoData {
 
 #[tauri::command]
 pub fn edit_memo_data(state: State<Db>, params: EditMemoData) -> bool {
-    let conn = state.connection.lock().unwrap();
-    let db = conn.get("db").unwrap();
+    let db = state.connection.lock().unwrap();
 
     let tx = db.transaction();
     let now = Local::now().timestamp_millis();

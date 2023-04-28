@@ -18,8 +18,8 @@ pub struct SearchTagValue {
  */
 #[tauri::command]
 pub fn search_memo_tag(state: State<Db>, params: SearchTagValue) -> Vec<MemoTag> {
-    let conn = state.connection.lock().unwrap();
-    let db = conn.get("db").unwrap();
+    let db = state.connection.lock().unwrap();
+
     let mut stmt = db
         .prepare("select * from memo_tag where name like ?1")
         .unwrap();
@@ -48,8 +48,7 @@ pub struct InsertMemoTag {
  */
 #[tauri::command]
 pub fn insert_memo_tag(state: State<Db>, params: InsertMemoTag) -> MemoTag {
-    let conn = state.connection.lock().unwrap();
-    let db = conn.get("db").unwrap();
+    let db = state.connection.lock().unwrap();
 
     let _is_tag_exist: String = db
         .query(
