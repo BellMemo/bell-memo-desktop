@@ -1,6 +1,7 @@
 import classnames from "classnames";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { Tag } from "@src/components";
+import { Copy } from "@src/components/Copy";
 
 const project = {
   name: "React Components",
@@ -22,15 +23,15 @@ export const Card = () => {
         {project.initials}
       </div>
       <div className="flex flex-1 items-center justify-between truncate rounded-r-md border-b border-r border-t border-gray-200 bg-white">
-        <div className="flex-1 truncate px-4 py-2 text-sm">
-          <a
-            href={project.href}
-            className="font-medium text-gray-900 hover:text-gray-600"
-          >
+        <div className="flex-1 truncate px-4 py-2 text-sm space-y-2">
+          <p className="font-medium text-gray-900 hover:text-gray-600">
             {project.name}
-          </a>
-          <p className="text-gray-500">{project.members} Members</p>
-          <div className="mt-1">
+          </p>
+          <div className="flex flex-1 items-center space-x-1">
+            <p className="text-gray-500">{project.members} Members</p>
+            <Copy text={"测试文案"} />
+          </div>
+          <div className="pt-2">
             <Tag />
           </div>
         </div>
