@@ -15,7 +15,6 @@
     "jsx": "react-jsx",
     "paths": {
       "@src/*": ["./src/*"],
-      "@stores/*": ["./src/states/features/*"]
     },
     "types": ["./src/types"]
   },
