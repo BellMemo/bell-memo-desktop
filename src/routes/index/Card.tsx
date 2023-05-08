@@ -11,7 +11,14 @@ const project = {
   bgColor: "bg-green-500",
 };
 
-export const Card = () => {
+interface CardProps {
+  title: React.ReactNode;
+  desc: React.ReactNode;
+  tags: string[];
+}
+
+export const Card: React.FC<CardProps> = (props) => {
+  const {title,desc,tags} = props;
   return (
     <div className="flex rounded-md shadow-sm">
       <div
@@ -25,14 +32,18 @@ export const Card = () => {
       <div className="flex flex-1 items-center justify-between truncate rounded-r-md border-b border-r border-t border-gray-200 bg-white">
         <div className="flex-1 truncate px-4 py-2 text-sm space-y-2">
           <p className="font-medium text-gray-900 hover:text-gray-600">
-            {project.name}
+            {title}
           </p>
           <div className="flex flex-1 items-center space-x-1">
-            <p className="text-gray-500">{project.members} Members</p>
-            <Copy text={"测试文案"} />
+            <p className="text-gray-500">{desc}</p>
+            <Copy text={desc as string} />
           </div>
           <div className="pt-2">
-            <Tag />
+            {
+              tags.map((i,index) => {
+                return <Tag content={i} key={index} />
+              })
+            }
           </div>
         </div>
         <div className="flex-shrink-0 pr-2">
