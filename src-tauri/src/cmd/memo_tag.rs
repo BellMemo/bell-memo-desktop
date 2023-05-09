@@ -1,6 +1,6 @@
 use chrono::Local;
-use rusqlite::params;
 use serde::{Deserialize, Serialize};
+use sqlx::{Connection, Sqlite};
 use tauri::State;
 use uuid::Uuid;
 
@@ -17,26 +17,20 @@ pub struct SearchTagValue {
  * 查询记录
  */
 #[tauri::command]
-pub fn search_memo_tag(state: State<Db>, params: SearchTagValue) -> Vec<MemoTag> {
-    let db = state.connection.lock().unwrap();
+pub async fn search_memo_tag(
+    state: State<'_, Db>,
+    params: SearchTagValue,
+) -> Result<Vec<MemoTag>, ()> {
+    let db = state.connection.lock().await;
+    let mut conn = db.get_connection().await;
 
-    let mut stmt = db
-        .prepare("select * from memo_tag where name like ?1")
+    let result = sqlx::query_as::<Sqlite, MemoTag>("select * from memo_tag where name like ?1")
+        .bind(format!("%{}%", params.content))
+        .fetch_all(&mut conn)
+        .await
         .unwrap();
 
-    let result = stmt
-        .query_map(params![format!("%{}%", params.content)], |record| {
-            Ok(MemoTag {
-                id: record.get("id")?,
-                name: record.get("name")?,
-                created: record.get("created")?,
-                updated: record.get("updated")?,
-            })
-        })
-        .unwrap()
-        .filter_map(|record| record.ok());
-
-    return result.collect();
+    Ok(result)
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -47,31 +41,35 @@ pub struct InsertMemoTag {
  * 写标签
  */
 #[tauri::command]
-pub fn insert_memo_tag(state: State<Db>, params: InsertMemoTag) -> MemoTag {
-    let db = state.connection.lock().unwrap();
+pub async fn insert_memo_tag(state: State<'_, Db>, params: InsertMemoTag) -> Result<MemoTag, ()> {
+    let db = state.connection.lock().await;
+    let mut conn = db.get_connection().await;
+    let mut tx = conn.begin().await.unwrap();
 
-    let _is_tag_exist: String = db
-        .query(
-            "select id from memo_tag where name=?",
-            [params.content.clone()],
-            |record| record.get(0),
-        )
-        .unwrap_or_default();
+    let _is_tag_exist = sqlx::query("select id from memo_tag where name=?")
+        .bind(params.content.clone())
+        .fetch_one(&mut tx)
+        .await
+        .unwrap();
 
     let uuid = Uuid::new_v4().to_string();
     let now = Local::now().timestamp_millis();
 
-    let _result = db
-        .exec(
-            "insert into memo_tag(id,name,created,updated) values(?1,?2,?3,?4)",
-            params![uuid, params.content, now, now],
-        )
+    let _result = sqlx::query("insert into memo_tag(id,name,created,updated) values(?1,?2,?3,?4)")
+        .bind(uuid.clone())
+        .bind(params.content.clone())
+        .bind(now)
+        .bind(now)
+        .execute(&mut tx)
+        .await
         .unwrap();
 
-    return MemoTag {
+    let tag = MemoTag {
         id: uuid,
         name: params.content,
         created: now as u64,
         updated: now as u64,
     };
+
+    Ok(tag)
 }

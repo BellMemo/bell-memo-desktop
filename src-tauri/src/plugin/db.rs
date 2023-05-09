@@ -1,12 +1,10 @@
-use std::sync::Mutex;
+use crate::model::db::Database;
+use futures::lock::Mutex;
 use tauri::{
     plugin::{Builder as PluginBuilder, TauriPlugin},
     Manager, Runtime,
 };
 
-use crate::model::db::Database;
-
-#[derive(Default)]
 pub struct Db {
     pub connection: Mutex<Database>,
 }
@@ -14,18 +12,13 @@ pub struct Db {
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
     return PluginBuilder::new("sqlite")
         .setup(|app| {
-            let db_instance = Database::new();
-            db_instance.ping();
-
-            app.manage(Db {
-                connection: Default::default(),
-            });
-
-            let db_state = app.state::<Db>();
-
-            *db_state.connection.lock().unwrap() = db_instance;
-
-            Ok(())
+            tauri::async_runtime::block_on(async move {
+                let db_instance = Database::new().await;
+                app.manage(Db {
+                    connection: Mutex::new(db_instance),
+                });
+                Ok(())
+            })
         })
         .build();
 }

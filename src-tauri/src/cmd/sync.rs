@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use sqlx::Sqlite;
 use std::{fs, io::BufWriter, path::Path, process::Command};
 use tauri::{api::dialog, AppHandle, State};
 
@@ -18,7 +19,7 @@ pub struct ExportDataStruct {
  * 导出数据生成JSON文件
  */
 #[tauri::command]
-pub fn save_data(app: AppHandle, state: State<Db>) {
+pub async fn save_data(app: AppHandle, state: State<'_, Db>) -> Result<(),()> {
     let data_path_pf = app
         .path_resolver()
         .app_config_dir()
@@ -32,51 +33,23 @@ pub fn save_data(app: AppHandle, state: State<Db>) {
         fs::remove_file(data_path).unwrap();
     }
 
-    let db = state.connection.lock().unwrap();
+    let db = state.connection.lock().await;
+    let mut conn = db.get_connection().await;
 
-    let mut memo_data_stmt = db.prepare("select * from memo_data").unwrap();
-    let memo_data = memo_data_stmt
-        .query_map([], |row| {
-            Ok(MemoData {
-                id: row.get("id")?,
-                title: row.get("title")?,
-                content: row.get("content")?,
-                created: row.get("created")?,
-                updated: row.get("updated")?,
-            })
-        })
-        .unwrap()
-        .filter_map(|row| row.ok())
-        .collect();
+    let memo_data = sqlx::query_as::<Sqlite, MemoData>("select * from memo_data")
+        .fetch_all(&mut conn)
+        .await
+        .unwrap();
 
-    let mut memo_tag_stmt = db.prepare("select * from memo_tag").unwrap();
-    let memo_tag = memo_tag_stmt
-        .query_map([], |record| {
-            Ok(MemoTag {
-                id: record.get("id")?,
-                name: record.get("name")?,
-                created: record.get("created")?,
-                updated: record.get("updated")?,
-            })
-        })
-        .unwrap()
-        .filter_map(|row| row.ok())
-        .collect();
+    let memo_tag = sqlx::query_as::<Sqlite, MemoTag>("select * from memo_tag")
+        .fetch_all(&mut conn)
+        .await
+        .unwrap();
 
-    let mut memo_tag_data_stmt = db.prepare("select * from memo_tag_data").unwrap();
-    let memo_tag_data = memo_tag_data_stmt
-        .query_map([], |row| {
-            Ok(MemoTagData {
-                id: row.get("id")?,
-                tag_id: row.get("tag_id")?,
-                memo_id: row.get("memo_id")?,
-                created: row.get("created")?,
-                updated: row.get("updated")?,
-            })
-        })
-        .unwrap()
-        .filter_map(|row| row.ok())
-        .collect();
+    let memo_tag_data = sqlx::query_as::<Sqlite, MemoTagData>("select * from memo_tag_data")
+        .fetch_all(&mut conn)
+        .await
+        .unwrap();
 
     let export_data = ExportDataStruct {
         memo_data: memo_data,
@@ -103,6 +76,7 @@ pub fn save_data(app: AppHandle, state: State<Db>) {
             .spawn()
             .unwrap();
     }
+    Ok(())
 }
 
 #[tauri::command(async)]
