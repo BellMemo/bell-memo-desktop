@@ -29,7 +29,9 @@ impl Database {
             .await
             .unwrap();
 
-        Database { pool: Arc::new(pool) }
+        Database {
+            pool: Arc::new(pool),
+        }
     }
 
     pub async fn init_db(&self) -> bool {
@@ -52,6 +54,15 @@ impl Database {
 
         tx.commit().await.unwrap();
         return true;
+    }
+
+    pub async fn ping(&self) {
+        let mut conn = self.pool.clone().acquire().await.unwrap();
+        conn.ping().await.unwrap();
+    }
+
+    pub async fn close(&self) {
+        self.pool.close().await;
     }
 
     pub async fn get_connection(&self) -> PoolConnection<Sqlite> {
